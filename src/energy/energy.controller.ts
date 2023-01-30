@@ -10,7 +10,7 @@ export class EnergyController {
 
   @Get("/production")
   async getProduction(): Promise<Payload> {
-    return await this.energyService.getProduction();
+    return await this.energyService.getDifferentiatedProduction();
   }
 
   @Get("/production/total")
