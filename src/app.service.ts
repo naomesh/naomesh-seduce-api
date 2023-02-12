@@ -3,6 +3,7 @@ import GrafanaUrlBuilder from "./GrafanaUrlBuilder";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
 import FloatPayload from "./payload/FloatPayload";
+import SumAndDataPayload from "./payload/SumAndDataPayload";
 
 @Injectable()
 export class AppService {
@@ -45,6 +46,26 @@ export class AppService {
     }
 
     return new FloatPayload("Live production of solar panels", "watt", sum/(results.length));
+  }
+
+  async getConsumptionDiffNode(nodeID: string, from: number, step: number): Promise<any[]> {
+    const {data} =  await firstValueFrom(this.httpService.get(GrafanaUrlBuilder.consumptionDiffNode(nodeID, from, step)))
+    let results = data.results;
+    if(results.length != 1) {
+      throw new Error("[getConsumptionDiffNode] Results length does not match 1 - results: " + results.length);
+    }
+    let finalPayload = [];
+    for(let i = 0; i < results.length; i++) {
+      //sum all values
+      let values = results[i].series[0].values;
+      let sum = 0;
+      for(let j = 0; j < values.length; j++) {
+        sum += values[j][1];
+      }
+      finalPayload.push(new SumAndDataPayload(`Consumption of node ${nodeID} from last ${from} hours`, "watt", values, sum));
+
+    }
+    return finalPayload;
   }
 
 }

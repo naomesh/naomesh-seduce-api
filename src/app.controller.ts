@@ -26,4 +26,13 @@ export class AppController {
     return (await this.appService.getLiveConsumption([nodeID]))[0]
   }
 
+  @Get(":nodeID/consumption-diff")
+  @Version('1')
+  async getConsumptionDiffNode(
+    @Param("nodeID") nodeID,
+    @Query("from") from = 2,
+    @Query("step") step = 500
+  ): Promise<any[]> {
+    return await this.appService.getConsumptionDiffNode(nodeID, from, step);
+  }
 }

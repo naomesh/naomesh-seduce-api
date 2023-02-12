@@ -6,6 +6,11 @@ export default class GrafanaUrlBuilder {
     return process.env.SEDUCE_GRAFANA_BASE_URL + "&q=" + query;
   }
 
+  static consumptionDiffNode(nodeID: string, from: number, step: number): string {
+    let query = `SELECT mean("value") FROM "sensors" WHERE ("sensor" = '${nodeID}') AND time >= now() - ${from}h GROUP BY time(1${step}ms) fill(null);`;
+    return this.buildWithQuery(encodeURIComponent(query));
+  }
+
   static liveConsumption(nodes: string[]): string {
     let nodesQuery = nodes
       .map((node) => `SELECT mean("value") FROM "sensors" WHERE ("sensor" = '${node}') AND time >= now() - 5s fill(null);`)
