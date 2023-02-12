@@ -46,4 +46,5 @@ export class AppService {
 
     return new FloatPayload("Live production of solar panels", "watt", sum/(results.length));
   }
+
 }

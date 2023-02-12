@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Version } from "@nestjs/common";
+import { Controller, Get, Param, Query, Version } from "@nestjs/common";
 import { AppService } from './app.service';
 import FloatPayload from "./payload/FloatPayload";
 
@@ -20,5 +20,10 @@ export class AppController {
     return await this.appService.getLiveProductionSolarPanels();
   }
 
+  @Get(":nodeID/live-consumption")
+  @Version('1')
+  async getLiveConsumptionNode(@Param("nodeID") nodeID): Promise<any[]> {
+    return (await this.appService.getLiveConsumption([nodeID]))[0]
+  }
 
 }
