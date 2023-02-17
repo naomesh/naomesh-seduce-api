@@ -35,4 +35,14 @@ export class AppController {
   ): Promise<any[]> {
     return await this.appService.getConsumptionDiffNode(nodeID, from, step);
   }
+
+  @Get(":nodeID/consumption")
+  @Version('1')
+  async getConsumptionNode(
+    @Param("nodeID") nodeID,
+    @Query("range") range,
+    @Query("step") step = 500
+  ): Promise<any[]> {
+    return await this.appService.getConsumptionNode(nodeID, range, step);
+  }
 }

@@ -5,10 +5,18 @@ export default class SumAndDataPayload extends Payload {
   constructor(
     name: string,
     unit: string,
-    public data: number,
+    public data: Array<Data>,
     public sum: number,
   ) {
     super(name, unit);
   }
 
+}
+
+class Data {
+  constructor(
+    public start: number,
+    public end: number,
+    public data: Array<Array<number>>
+  ) {}
 }

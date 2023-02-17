@@ -3,7 +3,7 @@ import GrafanaUrlBuilder from "./GrafanaUrlBuilder";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
 import FloatPayload from "./payload/FloatPayload";
-import SumAndDataPayload from "./payload/SumAndDataPayload";
+import SumAndDataNumberPayload from "./payload/SumAndDataNumberPayload";
 
 @Injectable()
 export class AppService {
@@ -62,10 +62,22 @@ export class AppService {
       for(let j = 0; j < values.length; j++) {
         sum += values[j][1];
       }
-      finalPayload.push(new SumAndDataPayload(`Consumption of node ${nodeID} from last ${from} hours`, "watt", values, sum));
+      finalPayload.push(new SumAndDataNumberPayload(`Consumption of node ${nodeID} from last ${from} hours`, "watt", values, sum));
 
     }
     return finalPayload;
+  }
+
+  async getConsumptionNode(nodeID: string, range: string, step: number): Promise<any[]> {
+    //range is for example 1675782805000:1675782805000,1675782806000:1675782906000 transform to [[1675782805000,1675782805000],[1675782806000,1675782906000]]
+    let ranges : Array<Array<string>> = range
+      .split(",")
+      .map((range) => range.split(":"));
+
+    const {data} =  await firstValueFrom(this.httpService.get(GrafanaUrlBuilder.consumptionNode(nodeID, ranges, step)))
+
+
+    return data.results;
   }
 
 }
