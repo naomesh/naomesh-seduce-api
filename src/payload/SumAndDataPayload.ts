@@ -1,7 +1,6 @@
-import Payload from "./Payload";
+import Payload from './Payload';
 
 export default class SumAndDataPayload extends Payload {
-
   constructor(
     name: string,
     unit: string,
@@ -10,13 +9,12 @@ export default class SumAndDataPayload extends Payload {
   ) {
     super(name, unit);
   }
-
 }
 
-class Data {
+export class Data {
   constructor(
     public start: number,
     public end: number,
-    public data: Array<Array<number>>
+    public data: Array<Array<number>>,
   ) {}
 }

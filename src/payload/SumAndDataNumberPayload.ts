@@ -1,14 +1,8 @@
-import Payload from "./Payload";
+import Payload from './Payload';
 
 export default class SumAndDataNumberPayload extends Payload {
 
-  constructor(
-    name: string,
-    unit: string,
-    public data: number,
-    public sum: number,
-  ) {
+  constructor(name: string, unit: string, public data: number, public sum: number) {
     super(name, unit);
   }
-
 }
