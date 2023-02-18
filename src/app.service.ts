@@ -5,6 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import FloatPayload from './payload/FloatPayload';
 import SumAndDataNumberPayload from './payload/SumAndDataNumberPayload';
 import SumAndDataPayload, { Data } from './payload/SumAndDataPayload';
+import DataPayload from "./payload/DataPayload";
 
 @Injectable()
 export class AppService {
@@ -152,5 +153,27 @@ export class AppService {
       dataPayload,
       sum,
     );
+  }
+
+  async getProductionSolarPanels(
+    from: number): Promise<DataPayload> {
+    const { data } = await firstValueFrom(
+      this.httpService.get(
+        GrafanaUrlBuilder.productionSolarPanels(from),
+      ),
+    );
+
+    //return a DataPayload
+    const rawData = [];
+    for (let i = 0; i < data.results.length; i++) {
+      rawData.push(data.results[i].series[0].values);
+    }
+
+    return new DataPayload(
+      `Production of solar panels from last ${from} hours`,
+      'watt',
+      rawData
+    );
+
   }
 }
