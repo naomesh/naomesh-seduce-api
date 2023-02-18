@@ -166,7 +166,7 @@ export class AppService {
     //return a DataPayload
     const rawData = [];
     for (let i = 0; i < data.results.length; i++) {
-      rawData.push(data.results[i].series[0].values);
+      rawData.push(data.results[i].series[0].values[0]);
     }
 
     return new DataPayload(

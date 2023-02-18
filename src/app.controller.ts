@@ -22,7 +22,7 @@ export class AppController {
 
   @Get('production-solar-panels')
   @Version('1')
-  async getProductionSolarPanels( @Query('from') from = 24): Promise<DataPayload> {
+  async getProductionSolarPanels(@Query('from') from = 24): Promise<DataPayload> {
     return await this.appService.getProductionSolarPanels(from);
   }
 
