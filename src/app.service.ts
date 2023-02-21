@@ -162,17 +162,27 @@ export class AppService {
 
     //return a DataPayload
     const rawData = [];
-    for (let i = 0; i < data.results.length; i++) {
-      for (let j = 0; j < data.results[i].series.length; j++) {
-        const values = data.results[i].series[j].values;
-        rawData.push(values);
+    const temp = {};
+    //for each same timestamp sum it up
+    for (const element of data.results) {
+      const values = element.series[0].values;
+      for (let j = 0; j < values.length; j++) {
+        if (temp[values[j][0]] == null) {
+          temp[values[j][0]] = values[j][1];
+        } else {
+          temp[values[j][0]] += values[j][1];
+        }
       }
+    }
+    const finalData = [];
+    for (const key in temp) {
+      finalData.push([parseInt(key), temp[key]]);
     }
 
     return new DataPayload(
       `Production of solar panels from last ${from} hours`,
       'watt',
-      rawData,
+      finalData,
     );
   }
 }
