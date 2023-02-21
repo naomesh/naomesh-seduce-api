@@ -167,6 +167,8 @@ export class AppService {
     for (const element of data.results) {
       const values = element.series[0].values;
       for (let j = 0; j < values.length; j++) {
+        //if the value is null skip it
+        if (values[j][1] == null) continue;
         if (temp[values[j][0]] == null) {
           temp[values[j][0]] = values[j][1];
         } else {
