@@ -59,27 +59,11 @@ export class AppService {
     const results = data.results;
     let sum = 0;
     for (let i = 0; i < results.length; i++) {
-      if (
-        results[i].series.length != 1 ||
-        results[i].series[0].values.length != 1
-      ) {
-        console.error(
-          '[getLiveProductionSolarPanels] Result series length does not match 1 - result: ' +
-            results[i].series.length +
-            ' values: ' +
-            results[i].series[0].values.length,
-        );
-        continue;
-      }
-      const values = results[i].series[0].values;
+      const values = results[i].series[0].values.filter((v) => v[1] !== null);
       sum += values[0][1];
     }
 
-    return new FloatPayload(
-      'Live production of solar panels',
-      'watt',
-      sum / results.length,
-    );
+    return new FloatPayload('Live production of solar panels', 'watt', sum);
   }
 
   async getConsumptionDiffNode(
