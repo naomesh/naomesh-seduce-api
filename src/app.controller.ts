@@ -1,8 +1,8 @@
 import { Controller, Get, Param, Query, Version } from '@nestjs/common';
 import { AppService } from './app.service';
 import FloatPayload from './payload/FloatPayload';
-import SumAndDataPayload from "./payload/SumAndDataPayload";
-import DataPayload from "./payload/DataPayload";
+import SumAndDataPayload from './payload/SumAndDataPayload';
+import DataPayload from './payload/DataPayload';
 
 @Controller()
 export class AppController {
@@ -10,7 +10,7 @@ export class AppController {
 
   @Get('live-consumption')
   @Version('1')
-  async getLiveConsumption(@Query('nodes') nodes): Promise<any[]> {
+  async getLiveConsumption(@Query('nodes') nodes: string): Promise<any[]> {
     return await this.appService.getLiveConsumption(nodes.split(','));
   }
 
@@ -22,7 +22,9 @@ export class AppController {
 
   @Get('production-solar-panels')
   @Version('1')
-  async getProductionSolarPanels(@Query('from') from = 24): Promise<DataPayload> {
+  async getProductionSolarPanels(
+    @Query('from') from = 24,
+  ): Promise<DataPayload> {
     return await this.appService.getProductionSolarPanels(from);
   }
 
