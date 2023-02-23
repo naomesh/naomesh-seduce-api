@@ -120,9 +120,20 @@ export class AppService {
     );
 
     const dataPayload: Array<Data> = [];
-    for (let i = 0; i < data.results.length; i++) {
-      const values = data.results[i].series[0].values;
-      dataPayload.push(new Data(ranges[i][0], ranges[i][1], values));
+    for (let i = 2; i <= data.results.length; i+=2) {
+      const values0 = data.results[i-2].series[0].values;
+      const values1 = data.results[i-1].series[0].values;
+      //sum the values
+      const values = [];
+      for (let j = 0; j < values0.length; j++) {
+        const nextValue = values0[j][1] + values1[j][1];
+        if (nextValue === null || nextValue === 0) {
+          continue;
+        }
+        values.push([values0[j][0], nextValue]);
+      }
+      const rangeIndex= Math.floor(i/2)-1
+      dataPayload.push(new Data(ranges[rangeIndex][0], ranges[rangeIndex][1], values));
     }
 
     let sum = 0;

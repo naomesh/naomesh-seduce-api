@@ -44,9 +44,9 @@ export default class GrafanaUrlBuilder {
   ): string {
     let query = '';
     for (let i = 0; i < ranges.length; i++) {
-      query += `SELECT mean("value") FROM "sensors" WHERE ("sensor" = '${nodeID}') AND time >= ${ranges[i][0]}ms AND time <= ${ranges[i][1]}ms GROUP BY time(${step}ms) fill(null);`;
+      query += `SELECT mean("value") FROM "sensors" WHERE ("sensor" = '${nodeID}0') AND time >= ${ranges[i][0]}ms AND time <= ${ranges[i][1]}ms GROUP BY time(${step}ms) fill(null);`;
+      query += `SELECT mean("value") FROM "sensors" WHERE ("sensor" = '${nodeID}1') AND time >= ${ranges[i][0]}ms AND time <= ${ranges[i][1]}ms GROUP BY time(${step}ms) fill(null);`;
     }
-
     return this.buildWithQuery(encodeURIComponent(query));
   }
 }
