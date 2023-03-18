@@ -108,45 +108,58 @@ export class AppService {
     range: string,
     step: number,
   ): Promise<SumAndDataPayload> {
-    //range is for example 1675782805000:1675782805000,1675782806000:1675782906000 transform to [[1675782805000,1675782805000],[1675782806000,1675782906000]]
+    // range is for example 1675782805000:1675782805000,1675782806000:1675782906000
+    // transform to [[1675782805000, 1675782805000], [1675782806000, 1675782906000]]
     const ranges: Array<Array<number>> = range
-      .split(',')
-      .map((range) => range.split(':').map((time) => parseInt(time)));
+      .split(",")
+      .map((range) =>
+        range.split(":").map((time) => parseInt(time))
+      );
 
+    // Make HTTP request to get consumption data from Grafana API
     const { data } = await firstValueFrom(
       this.httpService.get(
-        GrafanaUrlBuilder.consumptionNode(nodeID, ranges, step),
-      ),
+        GrafanaUrlBuilder.consumptionNode(nodeID, ranges, step)
+      )
     );
 
+    // Process the consumption data to calculate the energy consumption for each time range
     const dataPayload: Array<Data> = [];
-    for (let i = 2; i <= data.results.length; i+=2) {
-      const values0 = data.results[i-2].series[0].values;
-      const values1 = data.results[i-1].series[0].values;
-      //sum the values
+    for (let i = 2; i <= data.results.length; i += 2) {
+      const values0 = data.results[i - 2].series[0].values;
+      const values1 = data.results[i - 1].series[0].values;
+
+      // Calculate the energy consumption for each timestamp in the time range
       const values = [];
       for (let j = 0; j < values0.length; j++) {
-        const nextValue = values0[j][1] + values1[j][1];
+        const nextValue = values1[j][1] - values0[j][1];
         if (nextValue === null || nextValue === 0) {
           continue;
         }
         values.push([values0[j][0], nextValue]);
       }
-      const rangeIndex= Math.floor(i/2)-1
-      dataPayload.push(new Data(ranges[rangeIndex][0], ranges[rangeIndex][1], values));
+
+      // Create a Data object to store the energy consumption for the current time range
+      const rangeIndex = Math.floor(i / 2) - 1;
+      dataPayload.push(
+        new Data(ranges[rangeIndex][0], ranges[rangeIndex][1], values)
+      );
     }
 
+    // Calculate the total energy consumption by summing the energy consumption for each time range
     let sum = 0;
     for (let i = 0; i < dataPayload.length; i++) {
       for (let j = 0; j < dataPayload[i].data.length; j++) {
         sum += dataPayload[i].data[j][1];
       }
     }
+
+    // Return a SumAndDataPayload object with the total energy consumption and the energy consumption for each time range
     return new SumAndDataPayload(
       `Consumption of node ${nodeID}`,
-      'watt',
+      "watt",
       dataPayload,
-      sum,
+      sum
     );
   }
 
